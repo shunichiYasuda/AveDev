@@ -25,6 +25,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ComboBox;
 import javafx.stage.FileChooser;
 
 public class AveDevController {
@@ -33,11 +34,14 @@ public class AveDevController {
 	boolean fileSetFlag;
 	String[] fieldNameArray;
 	String fieldNameRecord;
+	List<StringList> dataList = new ArrayList<StringList>();
 	List<String> recordList = new ArrayList<String>();
 	@FXML
 	TextArea log;
 	@FXML
 	TextField eliminateField;
+	@FXML
+	ComboBox<String> combo;
 
 	@FXML
 	private void openAction() {
@@ -63,6 +67,9 @@ public class AveDevController {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "JISAutoDetect"));
 			line = br.readLine();
 			fieldNameArray = line.split(",");
+			for (String s : fieldNameArray) {
+				combo.getItems().add(s);
+			}
 			fieldNameRecord = line;
 			while ((line = br.readLine()) != null) {
 				recordList.add(line);
@@ -85,8 +92,31 @@ public class AveDevController {
 
 	@FXML
 	private void execAction() {
+		for (int i = 0; i < fieldNameArray.length; i++) {
+			StringList col = new StringList(); // 「たて」方向データ
+			for (String s : recordList) {// 「よこ」方向データ
+				String[] tmpStr = s.split(","); // 1行ずついったんバラす
+				col.add(tmpStr[i]);
+			}
+			dataList.add(col);// 「たて」に並んだ列が、横並びになったイメージ
+		} // end of for(int i=0...
+			// for check
+		String theField = combo.getValue();
+		int hit = hitNumber(fieldNameArray, theField);
+		log.appendText("\n" + fieldNameArray[hit] + "\n");
+		for (String s : dataList.get(hit)) {
+			log.appendText(s + "\n");
+		}
+		// データ処理は別メソッド
+		calcStat();
+
+	}// end of execArray()
+
+	private void calcStat() {
+		// dataList リストを用いて各列の平均などを計算し、表示
 		// TextField から除外番号を読み取る
 		String[] eliminate = eliminateField.getText().split(",");
+		
 	}
 
 	@FXML
@@ -124,5 +154,16 @@ public class AveDevController {
 		alert.setTitle("ファイルを選択してください");
 		alert.getDialogPane().setContentText(str);
 		alert.showAndWait(); // 表示
+	}
+
+	// String[] からkeyと一致する場所を返す
+	private int hitNumber(String[] array, String key) {
+		int r = 0;
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].equals(key)) {
+				r = i;
+			}
+		}
+		return r;
 	}
 }
