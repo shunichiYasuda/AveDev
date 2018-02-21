@@ -28,12 +28,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 
 public class AveDevController {
-	File file,saveFile,saveLogFile;
+	File file, saveFile, saveLogFile;
 	String sysEncode, filePath;
 	boolean fileSetFlag;
 	String[] fieldNameArray;
 	String fieldNameRecord;
-	List<String> recordList= new ArrayList<String>();
+	List<String> recordList = new ArrayList<String>();
 	@FXML
 	TextArea log;
 	@FXML
@@ -56,12 +56,11 @@ public class AveDevController {
 			filePath = file.getParent();
 		}
 		log.appendText("アンケートファイルに" + file.getAbsolutePath() + "がセットされました。");
-		//フィールド名を保存
+		// フィールド名を保存
 		String line = null;
 		BufferedReader br;
 		try {
-			br = new BufferedReader(
-					new InputStreamReader(new FileInputStream(file), "JISAutoDetect"));
+			br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "JISAutoDetect"));
 			line = br.readLine();
 			fieldNameArray = line.split(",");
 			fieldNameRecord = line;
@@ -70,7 +69,7 @@ public class AveDevController {
 			}
 			//
 			br.close();
-			
+
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,12 +80,13 @@ public class AveDevController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	@FXML
 	private void execAction() {
-
+		// TextField から除外番号を読み取る
+		String[] eliminate = eliminateField.getText().split(",");
 	}
 
 	@FXML
