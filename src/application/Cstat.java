@@ -37,7 +37,7 @@ public class Cstat {
 	public String getData() {
 		String str;
 		str = new String(this.name);
-		str += "￥t平均：" + ave.toString() + "\t分散：" + dev.toString() + "\t標準偏差" + stdDev.toString();
+		str += "\t平均：" + ave.toString() + "\t分散：" + dev.toString() + "\t標準偏差" + stdDev.toString();
 		str += "\n四分位";
 		int index =1;
 		for (BigDecimal b : quartile) {
