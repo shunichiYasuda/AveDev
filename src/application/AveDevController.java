@@ -100,13 +100,7 @@ public class AveDevController {
 			}
 			dataList.add(col);// 「たて」に並んだ列が、横並びになったイメージ
 		} // end of for(int i=0...
-			// for check
-		String theField = combo.getValue();
-		int hit = hitNumber(fieldNameArray, theField);
-		log.appendText("\n" + fieldNameArray[hit] + "\n");
-		for (String s : dataList.get(hit)) {
-			log.appendText(s + "\n");
-		}
+
 		// データ処理は別メソッド
 		calcStat();
 
@@ -116,8 +110,40 @@ public class AveDevController {
 		// dataList リストを用いて各列の平均などを計算し、表示
 		// TextField から除外番号を読み取る
 		String[] eliminate = eliminateField.getText().split(",");
-		
-	}
+		// 本当は List 全部やる
+		// for check
+		String theField = combo.getValue();
+		int hit = hitNumber(fieldNameArray, theField);
+		String theFieldName = fieldNameArray[hit];
+		log.appendText("\n" + fieldNameArray[hit] + "\n");
+		ArrayList<Integer> theColData = new ArrayList<Integer>();
+		for (String s : dataList.get(hit)) {
+			log.appendText(s+"\n");
+			boolean eliminateFlag = false;
+			for (String e : eliminate) {
+				if (e.equals(s))
+					eliminateFlag = true;
+			}
+			//
+			int v;
+			try {
+				v = Integer.parseInt(s);
+			} catch (NumberFormatException e) {
+				eliminateFlag = true;
+			}
+			//
+			if(!eliminateFlag) {
+				v = Integer.parseInt(s);
+				theColData.add(v);
+			}
+		} // end of for(String s:dataList.get(hit)...
+		//以上で排除文字を処理した上で IntegerList にデータがはいった。
+		//計算のためにCstatクラスを作る
+		Cstat theStat = new Cstat(theFieldName);
+		theStat.ave(theColData);
+		log.appendText(theStat.getData());
+
+	}// end of calcStat()
 
 	@FXML
 	private void saveAction() {
