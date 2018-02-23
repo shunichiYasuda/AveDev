@@ -59,7 +59,7 @@ public class AveDevController {
 			fileSetFlag = true;
 			filePath = file.getParent();
 		}
-		log.appendText("アンケートファイルに" + file.getAbsolutePath() + "がセットされました。");
+		log.appendText("アンケートファイルに" + file.getAbsolutePath() + "がセットされました。\n");
 		// フィールド名を保存
 		String line = null;
 		BufferedReader br;
@@ -92,6 +92,10 @@ public class AveDevController {
 
 	@FXML
 	private void execAction() {
+		if(filePath==null) {
+			showAlert("ファイルが選択されていませんよ。");
+			return;
+		}
 		for (int i = 0; i < fieldNameArray.length; i++) {
 			StringList col = new StringList(); // 「たて」方向データ
 			for (String s : recordList) {// 「よこ」方向データ
@@ -110,23 +114,26 @@ public class AveDevController {
 		// dataList リストを用いて各列の平均などを計算し、表示
 		// TextField から除外番号を読み取る
 		String[] eliminate = eliminateField.getText().split(",");
-//		log.appendText("\neliminate:");
-//		for(String s:eliminate) {
-//			log.appendText(s+"\t");
-//		}
+		// log.appendText("\neliminate:");
+		// for(String s:eliminate) {
+		// log.appendText(s+"\t");
+		// }
 		// 本当は List 全部やる
 		// for check
 		String theField = combo.getValue();
 		int hit = hitNumber(fieldNameArray, theField);
 		String theFieldName = fieldNameArray[hit];
-		//log.appendText("\n" + fieldNameArray[hit] + "\n");
+		// log.appendText("\n" + fieldNameArray[hit] + "\n");
 		ArrayList<Integer> theColData = new ArrayList<Integer>();
 		for (String s : dataList.get(hit)) {
-			//log.appendText("\n"+s);
+			// log.appendText("\n"+s);
 			boolean eliminateFlag = false;
 			for (String e : eliminate) {
 				if (e.equals(s))
 					eliminateFlag = true;
+			}
+			if (s.isEmpty() || s.equals("")) {
+				eliminateFlag = true;
 			}
 			//
 			int v;
@@ -136,26 +143,95 @@ public class AveDevController {
 				eliminateFlag = true;
 			}
 			//
-			if(!eliminateFlag) {
+			if (!eliminateFlag) {
 				v = Integer.parseInt(s);
 				theColData.add(v);
 			}
 		} // end of for(String s:dataList.get(hit)...
-//		for(Integer n: theColData) {
-//			log.appendText("\n"+n.intValue());
-//		}
-		//以上で排除文字を処理した上で IntegerList にデータがはいった。
-		//計算のためにCstatクラスを作る
-		Cstat theStat = new Cstat(theFieldName);
-		theStat.calcData(theColData);
-		log.appendText(theStat.getData());
+			// for(Integer n: theColData) {
+			// log.appendText("\n"+n.intValue());
+			// }
+			// 以上で排除文字を処理した上で IntegerList にデータがはいった。
+			// 計算のためにCstatクラスを作る
+		if (theColData.size() != 0) {
+			Cstat theStat = new Cstat(theFieldName);
+			theStat.calcData(theColData);
+			log.appendText(theStat.getData());
+		}
 
 	}// end of calcStat()
 
 	@FXML
 	private void saveAction() {
+		if(filePath==null) {
+			showAlert("ファイルが選択されていませんよ。");
+			return;
+		}
+		for (int i = 0; i < fieldNameArray.length; i++) {
+			StringList col = new StringList(); // 「たて」方向データ
+			for (String s : recordList) {// 「よこ」方向データ
+				String[] tmpStr = s.split(","); // 1行ずついったんバラす
+				col.add(tmpStr[i]);
+			}
+			dataList.add(col);// 「たて」に並んだ列が、横並びになったイメージ
+		} // end of for(int i=0...
+			// TextField から除外番号を読み取る
+		String[] eliminate = eliminateField.getText().split(",");
+		FileChooser fc = new FileChooser();
+		fc.setInitialDirectory(new File(filePath));
+		File saveFile = fc.showSaveDialog(log.getScene().getWindow());
+		String sysEncode = System.getProperty("file.encoding");
+		PrintWriter ps;
+		try {
+			ps = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(saveFile), sysEncode)));
+			// ファイル情報
+			ps.println("ファイル名：," + file.getAbsolutePath());
+			// すべてのフィールドについて処理を行う
+			int index = 0;
+			for (String theField : fieldNameArray) {
+				ArrayList<Integer> theColData = new ArrayList<Integer>();
+				//log.appendText(index + "\n");
+				for (String s : dataList.get(index)) {
+					// log.appendText("\n"+s);
+					boolean eliminateFlag = false;
+					for (String e : eliminate) {
+						if (e.equals(s))
+							eliminateFlag = true;
+					}
+					if (s.isEmpty() || s.equals("")) {
+						eliminateFlag = true;
+					}
+					//
+					int v;
+					try {
+						v = Integer.parseInt(s);
+					} catch (NumberFormatException e) {
+						eliminateFlag = true;
+					}
+					//
+					if (!eliminateFlag) {
+						v = Integer.parseInt(s);
+						theColData.add(v);
+					}
+				} // end of for(String s:dataList.get(index)...
+				if (theColData.size() != 0) {
+					Cstat theStat = new Cstat(theField);
+					theStat.calcData(theColData);
+					log.appendText(theStat.getData());
+					ps.print(theStat.getData());
+				}
+				index++;
+			} // end of for(String theField
+			ps.close();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-	}
+	} // end of saveAction()
 
 	@FXML
 	private void saveLogAction() {

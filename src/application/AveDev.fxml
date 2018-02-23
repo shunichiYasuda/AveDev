@@ -16,15 +16,6 @@
          <children>
             <ToolBar prefHeight="40.0" prefWidth="394.0">
               <items>
-                <Button mnemonicParsing="false" onAction="#openAction" text="Open..." />
-                  <Button layoutX="10.0" layoutY="13.0" mnemonicParsing="false" onAction="#execAction" text="Exec..." />
-                  <Button layoutX="67.0" layoutY="13.0" mnemonicParsing="false" onAction="#saveAction" text="Save..." />
-                  <Button mnemonicParsing="false" onAction="#saveLogAction" text="Save log..." />
-                  <Button layoutX="119.0" layoutY="13.0" mnemonicParsing="false" onAction="#quitAction" text="Quit" />
-              </items>
-            </ToolBar>
-            <ToolBar layoutY="40.0" prefHeight="40.0" prefWidth="394.0">
-              <items>
                   <Label text="Eliminate char">
                      <font>
                         <Font size="14.0" />
@@ -32,6 +23,15 @@
                   </Label>
                   <TextField fx:id="eliminateField" prefHeight="25.0" prefWidth="132.0" />
                   <ComboBox fx:id="combo" prefWidth="150.0" promptText="Select Field..." />
+              </items>
+            </ToolBar>
+            <ToolBar layoutY="40.0" prefHeight="40.0" prefWidth="394.0">
+              <items>
+                <Button mnemonicParsing="false" onAction="#openAction" text="Open..." />
+                  <Button layoutX="10.0" layoutY="13.0" mnemonicParsing="false" onAction="#execAction" text="Selected Field" />
+                  <Button layoutX="67.0" layoutY="13.0" mnemonicParsing="false" onAction="#saveAction" text="All Field..." />
+                  <Button mnemonicParsing="false" onAction="#saveLogAction" text="Save log..." />
+                  <Button layoutX="119.0" layoutY="13.0" mnemonicParsing="false" onAction="#quitAction" text="Quit" />
               </items>
             </ToolBar>
             <TextArea fx:id="log" layoutY="80.0" prefHeight="245.0" prefWidth="394.0" />
