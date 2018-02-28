@@ -54,6 +54,7 @@ public class Cstat {
 		this.stdDev = stdDev();
 		quartile(d);
 	}
+	
 
 	// 計算メソッド
 	public BigDecimal ave(ArrayList<Integer> data) {
@@ -66,7 +67,7 @@ public class Cstat {
 		a = sum.divide(new BigDecimal(data.size()), mc);
 		return a;
 	}
-
+	
 	//
 	public BigDecimal dev(List<Integer> data) {
 		BigDecimal sum = new BigDecimal(0);
